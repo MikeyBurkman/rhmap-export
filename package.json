@@ -1,0 +1,23 @@
+{
+  "name": "fhdb-export",
+  "version": "1.0.0",
+  "description": "CLI Exporting for FH Mongo Databases",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "npm run compile && node src/index.js",
+    "compile": "node_modules/.bin/tsc --pretty",
+    "clean": "del src/*.js"
+  },
+  "author": "MikeyBurkman",
+  "license": "MIT",
+  "dependencies": {
+    "@types/bluebird": "^3.0.36",
+    "@types/request-promise": "^4.1.33",
+    "bluebird": "^3.4.6",
+    "del-cli": "^0.2.0",
+    "request": "^2.79.0",
+    "request-promise": "^4.1.1",
+    "source-map-support": "^0.4.6",
+    "typescript": "^2.1.1"
+  }
+}
