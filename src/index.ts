@@ -17,7 +17,7 @@ function query(skip: number, limit: number): Promise<any[]> {
             userkey: config.userkey
         }
     };
-    
+
     if (config.query) {
         Object.keys(config.query).forEach(queryName => {
             body[queryName] = config.query[queryName];
@@ -36,12 +36,12 @@ function query(skip: number, limit: number): Promise<any[]> {
 
 function getNext(results: any[] = [], limit: number = 20, skip: number = 0): Promise<any[]> {
     return query(skip, limit).then(resp => {
-        results = results.concat(resp);
+        const newResults = results.concat(resp);
         if (resp.length < limit) {
             // Done!
-            return results;
+            return newResults;
         } else {
-            return getNext(results, limit, skip + limit);
+            return getNext(newResults, limit, skip + limit);
         }
     });
 }
