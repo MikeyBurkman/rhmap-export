@@ -1,5 +1,5 @@
 {
-  "name": "fhdb-export",
+  "name": "rhmap-export",
   "version": "1.0.0",
   "description": "CLI Exporting for FH Mongo Databases",
   "main": "src/index.js",
