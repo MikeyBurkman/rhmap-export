@@ -7,7 +7,7 @@ import * as Promise from 'bluebird';
 
 function query(skip: number, limit: number): Promise<any[]> {
     const url = config.host + '/mbaas/db';
-    const body = {
+    const body: any = {
         act: 'list',
         type: config.collection,
         limit: limit,
@@ -17,6 +17,12 @@ function query(skip: number, limit: number): Promise<any[]> {
             userkey: config.userkey
         }
     };
+    
+    if (config.query) {
+        Object.keys(config.query).forEach(queryName => {
+            body[queryName] = config.query[queryName];
+        });
+    }
 
     var req = request.post({
         uri: url,
@@ -40,11 +46,23 @@ function getNext(results: any[] = [], limit: number = 20, skip: number = 0): Pro
     });
 }
 
-getNext()
-    .then(res => res.map(r => r.fields.name))
-    .then(res => JSON.stringify(res, null, 2))
-    .then(console.log)
-    .catch(err => {
-        // Crash process!
-        throw err;
-    });
+(function() {
+    // Just log the length -- mostly for testing
+    getNext()
+        .then(res => console.log('Length: ', res.length))
+        .catch(err => {
+            // Crash process!
+            throw err;
+        });
+});
+
+(function() {
+    // Get the actual records
+    getNext()
+        .then(res => JSON.stringify(res, null, 2))
+        .then(console.log)
+        .catch(err => {
+            // Crash process!
+            throw err;
+        });
+})();

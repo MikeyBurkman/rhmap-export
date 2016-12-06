@@ -8,5 +8,5 @@ CLI for exporting from RHMAP Mongo Databases
   - `appkey` comes from the `API App Key` in App Details
   - `userkey` is best found by opening dev tools in the browser when running a query in the databrowser. Inspect the body for the request (the url ends in `/mbaas/db`) and look at the `__fh` object.
   - `collection` is the name of the collection you're querying
-  - TBD: Adding query parameters
+  - `query` is the optional query object, which contains properties like `eq` or `like`. Matches the `$fh.db` docs.
 3. Run `npm run export` to start the export process. It will print the JSON array of records to stdout.
