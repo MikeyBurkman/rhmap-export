@@ -11,3 +11,7 @@ CLI for exporting from RHMAP Mongo Databases
   - `query` is the optional query object, which contains properties like `eq` or `like`. Matches the `$fh.db` docs.
   - `returnFields` is the optional array of fields to bring back. Matches `fields` in the `$fh.db` docs.
 3. Run `npm run export` to start the export process. It will print the JSON array of records to stdout. These contain an `_id` guid field.
+
+### Caveats
+Right now it foolishly loads everything into memory before printing it to stdout. I'll eventually make this event-based and stream records out stdout, 
+which should improve performance and not crash if you have a big collection.
