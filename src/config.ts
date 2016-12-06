@@ -14,6 +14,8 @@ export interface Config {
     readonly appkey: string;
     readonly userkey: string;
     readonly collection: string;
+    readonly outputFile: string;
+    readonly prettyPrint?: boolean;
     readonly query?: {
         eq?: any;
         ne?: any;
@@ -32,6 +34,8 @@ const config: Config = {
     appkey: '123456789',
     userkey: '987654321',
     collection: 'collectionName',
+    outputFile: 'results.json',
+    prettyPrint: true,
     query: { // Query is optional
         eq: {
             status: 'processed',

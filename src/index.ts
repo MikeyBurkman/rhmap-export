@@ -1,6 +1,7 @@
 
 import 'source-map-support/register';
 
+import * as fs from 'fs';
 import * as request from 'request-promise';
 import config from './config';
 import * as Promise from 'bluebird';
@@ -58,6 +59,13 @@ function getNext(results: any[] = [], limit: number = 20, skip: number = 0): Pro
     });
 }
 
+function writeToOutputFile(results: any[]) {
+    const s = config.prettyPrint ? 
+        JSON.stringify(results, null, 2) :
+        JSON.stringify(results);
+    return Promise.fromCallback(cb => fs.writeFile(config.outputFile, s, cb));
+}
+
 (function() {
     // Just log the length -- mostly for testing
     getNext()
@@ -71,8 +79,8 @@ function getNext(results: any[] = [], limit: number = 20, skip: number = 0): Pro
 (function() {
     // Get the actual records
     getNext()
-        .then(res => JSON.stringify(res, null, 2))
-        .then(console.log)
+        .then(writeToOutputFile)
+        .then(() => console.log('Finished'))
         .catch(err => {
             // Crash process!
             throw err;

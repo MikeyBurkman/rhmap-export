@@ -8,9 +8,11 @@ CLI for exporting from RHMAP Mongo Databases
   - `appkey` comes from the `API App Key` in App Details
   - `userkey` is best found by opening dev tools in the browser when running a query in the databrowser. Inspect the body for the request (the url ends in `/mbaas/db`) and look at the `__fh` object.
   - `collection` is the name of the collection you're querying
+  - `outputFile` is the name of the file to write the results to
+  - `prettyPrint` is true if you want to format the JSON output
   - `query` is the optional query object, which contains properties like `eq` or `like`. Matches the `$fh.db` docs.
   - `returnFields` is the optional array of fields to bring back. Matches `fields` in the `$fh.db` docs.
-3. Run `npm run export` to start the export process. It will print the JSON array of records to stdout. These contain an `_id` guid field.
+3. Run `npm run export` to start the export process
 
 ### Caveats
 Right now it foolishly loads everything into memory before printing it to stdout. I'll eventually make this event-based and stream records out stdout, 
