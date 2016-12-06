@@ -5,6 +5,12 @@ import * as request from 'request-promise';
 import config from './config';
 import * as Promise from 'bluebird';
 
+function convertRecord(record: any) {
+    const r: any = record.fields;
+    r._id = record.guid;
+    return r;
+}
+
 function query(skip: number, limit: number): Promise<any[]> {
     const url = config.host + '/mbaas/db';
     const body: any = {
@@ -19,9 +25,14 @@ function query(skip: number, limit: number): Promise<any[]> {
     };
 
     if (config.query) {
-        Object.keys(config.query).forEach(queryName => {
-            body[queryName] = config.query[queryName];
+        const q = config.query;
+        Object.keys(q).forEach(queryName => {
+            body[queryName] = q[queryName];
         });
+    }
+
+    if (config.returnFields) {
+        body.fields = config.returnFields;
     }
 
     var req = request.post({
@@ -31,7 +42,8 @@ function query(skip: number, limit: number): Promise<any[]> {
     });
 
     return Promise.resolve(req)
-        .then(res => res.list);
+        .then(res => res.list)
+        .then(res => res.map(convertRecord));
 }
 
 function getNext(results: any[] = [], limit: number = 20, skip: number = 0): Promise<any[]> {
