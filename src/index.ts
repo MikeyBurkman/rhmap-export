@@ -7,6 +7,10 @@ import config from './config';
 import * as Promise from 'bluebird';
 
 function convertRecord(record: any) {
+    if (config.countOnly) {
+        return record;
+    }
+
     const r: any = record.fields;
     r._id = record.guid;
     return r;
@@ -36,6 +40,10 @@ function query(skip: number, limit: number): Promise<any[]> {
         body.fields = config.returnFields;
     }
 
+    if (config.countOnly) {
+        body.fields = ['_id']; // Can ignore everything else
+    }
+
     var req = request.post({
         uri: url,
         body: body,
@@ -59,30 +67,28 @@ function getNext(results: any[] = [], limit: number = 20, skip: number = 0): Pro
     });
 }
 
-function writeToOutputFile(results: any[]) {
-    const s = config.prettyPrint ? 
-        JSON.stringify(results, null, 2) :
-        JSON.stringify(results);
-    return Promise.fromCallback(cb => fs.writeFile(config.outputFile, s, cb));
+function outputResults(results: any[]): Promise<number> {
+    if (config.countOnly) {
+        // We log the number of results at the end anyways
+        return Promise.resolve(results.length);
+    }
+
+    const s = JSON.stringify(results, null, config.prettyPrint ? 2 : undefined);
+    if (config.outputFile) {
+        const file = config.outputFile;
+        return Promise.fromCallback(cb => fs.writeFile(file, s, cb))
+            .then(() => results.length);
+    } else {
+        console.log(s);
+        return Promise.resolve(results.length);
+    }
 }
 
-(function() {
-    // Just log the length -- mostly for testing
-    getNext()
-        .then(res => console.log('Length: ', res.length))
-        .catch(err => {
-            // Crash process!
-            throw err;
-        });
-});
-
-(function() {
-    // Get the actual records
-    getNext()
-        .then(writeToOutputFile)
-        .then(() => console.log('Finished'))
-        .catch(err => {
-            // Crash process!
-            throw err;
-        });
-})();
+// Execute the query
+getNext()
+    .then(outputResults)
+    .then(numResults => console.log(`Finished\n${numResults} results`))
+    .catch(err => {
+        // Crash process!
+        throw err;
+    });
